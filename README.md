@@ -193,7 +193,7 @@ product.
 
 | Capability | What it powers |
 |---|---|
-| **Multi-collector ingestion** | iMessage + WeChat (live) · WhatsApp + Telegram + Outlook (skeletons, real-data tuning pending) · macOS Calendar · your own via the [Collector Protocol](docs/architecture.md). One protocol, every IM channel you actually use. |
+| **Multi-collector ingestion** | iMessage + WeChat (live) · WhatsApp + Telegram + Outlook + Notion + Linear (skeletons, real-data tuning pending) · macOS Calendar · your own via the [Collector Protocol](docs/architecture.md). One protocol, every channel you actually use. |
 | **Auto-extract daemon** | launchd ingests new messages every 5 min from your wired collectors — no manual `extract` typing. Per-collector state so failures retry without re-scanning. |
 | **LLM extractors** | Two: the **commitment extractor** (high-confidence explicit promises stated in a message) and the **expectation extractor** (low-confidence inferred promises — unanswered questions, stale "let me check" offers, cadence breaks). BYO LLM key (DeepSeek / OpenAI / Anthropic / Ollama). |
 | **Calendar bidirectional** | `push-calendar` writes promises as macOS Calendar events; `pull-calendar` reads events back into the graph; event reschedules cascade to anchored promises so deadlines move with their underlying meetings. |
@@ -268,13 +268,14 @@ Roughly **~6 weeks out** from this writeup, give or take.
 The README isn't aspirational. The private core (separate repo,
 not linked here on purpose) is actively developed today:
 
-- **5 UI surfaces · 10 MCP tools · 6 collector adapters · briefing/recap panel · backup/restore CLI** — every
+- **5 UI surfaces · 10 MCP tools · 8 collector adapters · briefing/recap panel · backup/restore + install + doctor + forget CLIs** — every
   capability listed above is built and runs locally on the author's
   Mac. Skeletons are honestly flagged in the Capabilities table
   pending real-data tuning.
-- **347 tests passing · ruff clean · pip-audit 0 CVEs · bandit baseline-clean** —
-  green on every commit; security tooling pinned in dev deps.
-- **80+ commits** since first push; daily activity visible on
+- **380 tests passing · ruff clean · pip-audit 0 CVEs · bandit baseline-clean · prompt-baseline locked** —
+  green on every commit; security tooling pinned in dev deps;
+  prompt files hashed so any change requires a deliberate baseline bump.
+- **90+ commits** since first push; daily activity visible on
   [@Chen17-sq](https://github.com/Chen17-sq)'s public contribution
   graph (private repo commits surface there with "private contributions
   enabled" turned on).
@@ -299,8 +300,9 @@ real iMessage / WeChat history.
 - **Zero cloud by default**. Every byte stays on your Mac.
 - **BYO LLM key** (OpenAI / Anthropic / DeepSeek / Ollama / LM Studio). Stored in macOS Keychain.
 - **Per-source kill switch** — disable any contact, group, or app.
-- **One-shot forget** — `openpersona forget --person <id>` removes from SQLite + Markdown + sources.
-- **Snapshot + restore** — `openpersona backup` writes a `0600` tar.gz; `openpersona restore` rolls back with auto-quarantine of the live state.
+- **One-shot forget** — `openpersona forget --person <id-or-name>` atomically wipes a person from SQLite (people, facts, promises, reminders) + strips them from event participants + deletes the Markdown file. `--before <ISO>` for bulk redaction. Audit-logged.
+- **Snapshot + restore** — `openpersona backup` writes a `0600` tar.gz; `openpersona restore` validates archive members and rolls back with auto-quarantine of the live state.
+- **One-command launchd install** — `openpersona install` writes both plists (tick + auto-extract) and bootstraps them. `openpersona doctor` is the all-in-one readiness diagnostic.
 - **Sensitive content filter** — credit cards, verification codes, password formats dropped at the collector layer, never reach the graph.
 - **Localhost-only API** by default; CLI refuses non-loopback bind without `--allow-public`. CSP + `Cache-Control: no-store` + `X-Frame-Options: DENY` on every response. Audit log of every mutation.
 - **Persona dirs chmod'd to 0700** on every start; backup tarballs chmod'd to 0600. Markdown sync refuses path-traversal ids.
