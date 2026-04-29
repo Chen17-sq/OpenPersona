@@ -230,12 +230,12 @@ real iMessage / WeChat history.
 
 ### Want early access?
 
-- **Email** [your-email@example.com] — one line about how you'd use it
-- **Twitter / X** — follow [@your-handle](https://x.com/your-handle) for the public launch
-- **Open an issue** here describing your use case — I read every one and it shapes the v0.1.0 cut
-
-> 📌 *(README author: replace the bracketed placeholders with your
-> actual email + handle before pushing this repo public.)*
+- **Email** — [schen.aldrich@gmail.com](mailto:schen.aldrich@gmail.com)
+  with one line about how you'd use it
+- **LinkedIn** — [Aldrich Chen](https://www.linkedin.com/in/aldrich17siqi/)
+- **WeChat** — `18574843907` (for Chinese-speaking users; mention OpenPersona)
+- **Open an issue** here describing your use case — I read every one
+  and it shapes the v0.1.0 cut
 
 ---
 
