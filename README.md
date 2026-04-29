@@ -208,6 +208,26 @@ model mature against real usage. Public release follows when:
 
 Roughly **~6 weeks out** from this writeup, give or take.
 
+### Engineering status
+
+The README isn't aspirational. The private core (separate repo,
+not linked here on purpose) is actively developed today:
+
+- **5 UI surfaces · 9 MCP tools · 6 collector adapters** — every
+  capability listed above is built and runs locally on the author's
+  Mac. Skeletons are honestly flagged in the Capabilities table
+  pending real-data tuning.
+- **279 tests passing** across extractors, store, API, MCP, and CLI
+  — green on every commit.
+- **55+ commits** since first push; daily activity visible on
+  [@Chen17-sq](https://github.com/Chen17-sq)'s public contribution
+  graph (private repo commits surface there with "private contributions
+  enabled" turned on).
+
+What's gated is real-data validation, not the build itself. Source
+opens when the extractors hold up against a week of someone's
+real iMessage / WeChat history.
+
 ### Want early access?
 
 - **Email** [your-email@example.com] — one line about how you'd use it
