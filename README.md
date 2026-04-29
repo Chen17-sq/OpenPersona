@@ -154,6 +154,23 @@ straight into the Inbox for one-click confirm.
 
 ---
 
+## Screens
+
+> Screenshots get refreshed on each public-alpha milestone — see
+> [`docs/screenshots/README.md`](docs/screenshots/README.md) for
+> the capture process. Currently captured at v0 code-complete (~Apr 29 2026).
+
+| | |
+|---|---|
+| ![Self-View](docs/screenshots/self-view.png) | **Self-View · `localhost:7600/`** — *Today · 3 things* leads, then by-the-numbers, then overdue / due-this-week / recent-people. The first thing you see in the morning. |
+| ![The Week](docs/screenshots/the-week.png) | **The Week · `localhost:7600/calendar`** — events grouped by day, foregrounded by people. Floating events have red borders + a `[+ Add person]` flow. Each card has `[▸ Brief]`. |
+| ![Briefing panel](docs/screenshots/briefing-panel.png) | **Briefing panel** — slide-out from any event. *Top of mind* (school, work, birthday) · *Where you stand* (open promises both ways) · *Last we talked* · *Worth bringing up* (loose threads). |
+| ![Recap panel](docs/screenshots/recap-panel.png) | **Recap panel** — same surface, flipped to past events. *What was discussed* · *Loose threads still open* → feeds the Inbox. |
+| ![Inbox edit](docs/screenshots/inbox-edit.png) | **Inbox · `localhost:7600/inbox`** — accept / dismiss / *edit* the wording, deadline, who-promised-whom inline. Optional ☑ schedules a focus block 24 h before the deadline. |
+| ![Persona Card](docs/screenshots/persona-card.png) | **Persona Card · `localhost:7600/people/<id>`** — Next-meeting hint + `[+ Add fact]` + `[✨ Enrich with LLM]` at the top, then facts grouped by prefix, then promises both directions. |
+
+---
+
 ## Features — what you see and use
 
 The five surfaces in the local web UI at `localhost:7600`. Each one
