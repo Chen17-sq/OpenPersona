@@ -168,12 +168,13 @@ straight into the Inbox for one-click confirm.
 | ![Recap panel](docs/screenshots/recap-panel.png) | **Recap panel** — same surface, flipped to past events. *What was discussed* · *Loose threads still open* → feeds the Inbox. |
 | ![Inbox edit](docs/screenshots/inbox-edit.png) | **Inbox · `localhost:7600/inbox`** — accept / dismiss / *edit* the wording, deadline, who-promised-whom inline. Optional ☑ schedules a focus block 24 h before the deadline. |
 | ![Persona Card](docs/screenshots/persona-card.png) | **Persona Card · `localhost:7600/people/<id>`** — Next-meeting hint + `[+ Add fact]` + `[✨ Enrich with LLM]` at the top, then facts grouped by prefix, then promises both directions. |
+| ![The Network](docs/screenshots/the-network.png) | **The Network · `localhost:7600/network`** — force-directed relationship graph. Nodes scale by pending-load. Black centre = `me`. Red = high-load relationships. Click a node → that Persona Card. |
 
 ---
 
 ## Features — what you see and use
 
-The five surfaces in the local web UI at `localhost:7600`. Each one
+The six surfaces in the local web UI at `localhost:7600`. Each one
 renders a slice of your Persona graph; what's underneath is in the
 next section.
 
@@ -184,6 +185,7 @@ next section.
 | **The Week** | This week's events grouped by day, **foregrounded by people, not by hour-of-day**. Person chips + an "N promises due before this meeting" hint on every card. Floating events (no participants resolved) get a 1-click binding flow. Each event has a `[▸ Brief]` panel that flips between **briefing** (future event: top-of-mind facts, last we talked, worth bringing up) and **recap** (past event: what was discussed, loose threads). |
 | **Persona Card** | One person at a time: facts grouped by prefix (`bio:` / `tag:` / `preference:` / `date:` / `health:` / `read:` / `note:`), promises in both directions, recent interactions. Every row traces back to the source message. |
 | **Inbox** | Low-confidence extractions awaiting your call. Accept · dismiss · or **edit** the wording, deadline, or who-promised-whom inline before keeping it. Optional ☑ schedules a 1-hour focus block 24 h before the deadline. |
+| **The Network** | Force-directed graph of People as nodes, Promises + shared Events as weighted edges. Red = high-load relationship (≥ 5 pending). Click a node → that Persona Card. The "deal-flow user" view of who's connected to whom. |
 
 ## Capabilities — what runs underneath
 
@@ -268,14 +270,14 @@ Roughly **~6 weeks out** from this writeup, give or take.
 The README isn't aspirational. The private core (separate repo,
 not linked here on purpose) is actively developed today:
 
-- **5 UI surfaces · 10 MCP tools · 8 collector adapters · briefing/recap panel · backup/restore + install + doctor + forget CLIs** — every
+- **6 UI surfaces · 10 MCP tools · 8 collector adapters · briefing/recap panel · network graph viz · backup/restore + install + doctor + forget CLIs** — every
   capability listed above is built and runs locally on the author's
   Mac. Skeletons are honestly flagged in the Capabilities table
   pending real-data tuning.
-- **380 tests passing · ruff clean · pip-audit 0 CVEs · bandit baseline-clean · prompt-baseline locked** —
+- **386 tests passing · ruff clean · pip-audit 0 CVEs · bandit baseline-clean · prompt-baseline locked** —
   green on every commit; security tooling pinned in dev deps;
   prompt files hashed so any change requires a deliberate baseline bump.
-- **90+ commits** since first push; daily activity visible on
+- **100+ commits** since first push; daily activity visible on
   [@Chen17-sq](https://github.com/Chen17-sq)'s public contribution
   graph (private repo commits surface there with "private contributions
   enabled" turned on).

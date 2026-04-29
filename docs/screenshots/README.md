@@ -13,6 +13,7 @@ README. To capture / update:
 | `recap-panel.png` | Same panel for a past event (Recap mode) | Click `[▸ Recap]` on a past event card |
 | `inbox-edit.png` | Inbox row in edit mode showing the form (key/when/who/what + focus-block toggle) | `localhost:7600/inbox` → click `✎ Edit` |
 | `persona-card.png` | Persona Card with Next-meeting hint, + Add fact / ✨ Enrich row, and facts grouped by prefix | `localhost:7600/people/p_maya-chen` |
+| `the-network.png` | Force-directed relationship graph with `me` at the centre and at least one red high-load node | `localhost:7600/network` |
 
 ## Capture settings
 
