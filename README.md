@@ -268,13 +268,13 @@ Roughly **~6 weeks out** from this writeup, give or take.
 The README isn't aspirational. The private core (separate repo,
 not linked here on purpose) is actively developed today:
 
-- **5 UI surfaces · 10 MCP tools · 6 collector adapters · briefing/recap panel** — every
+- **5 UI surfaces · 10 MCP tools · 6 collector adapters · briefing/recap panel · backup/restore CLI** — every
   capability listed above is built and runs locally on the author's
   Mac. Skeletons are honestly flagged in the Capabilities table
   pending real-data tuning.
-- **288 tests passing** across extractors, store, API, MCP, and CLI
-  — green on every commit.
-- **60+ commits** since first push; daily activity visible on
+- **347 tests passing · ruff clean · pip-audit 0 CVEs · bandit baseline-clean** —
+  green on every commit; security tooling pinned in dev deps.
+- **80+ commits** since first push; daily activity visible on
   [@Chen17-sq](https://github.com/Chen17-sq)'s public contribution
   graph (private repo commits surface there with "private contributions
   enabled" turned on).
@@ -300,9 +300,18 @@ real iMessage / WeChat history.
 - **BYO LLM key** (OpenAI / Anthropic / DeepSeek / Ollama / LM Studio). Stored in macOS Keychain.
 - **Per-source kill switch** — disable any contact, group, or app.
 - **One-shot forget** — `openpersona forget --person <id>` removes from SQLite + Markdown + sources.
-- **Sensitive content filter** — credit cards, verification codes, password formats are dropped at the collector layer, never reach the graph.
-- **Localhost-only API** by default; CLI refuses non-loopback bind without `--allow-public`. CSP + cache-no-store + audit log on every mutation. SQLite + Markdown chmod'd to `0700`.
-- **Optional bearer-token auth** for the paranoid (`OPENPERSONA_AUTH_TOKEN` env var); off by default since single-user CORS-fenced localhost doesn't need it for the typical attack model.
+- **Snapshot + restore** — `openpersona backup` writes a `0600` tar.gz; `openpersona restore` rolls back with auto-quarantine of the live state.
+- **Sensitive content filter** — credit cards, verification codes, password formats dropped at the collector layer, never reach the graph.
+- **Localhost-only API** by default; CLI refuses non-loopback bind without `--allow-public`. CSP + `Cache-Control: no-store` + `X-Frame-Options: DENY` on every response. Audit log of every mutation.
+- **Persona dirs chmod'd to 0700** on every start; backup tarballs chmod'd to 0600. Markdown sync refuses path-traversal ids.
+- **Optional bearer-token auth** (`OPENPERSONA_AUTH_TOKEN`) for the paranoid; constant-time compare; off by default.
+- **Per-person rate limit** on the LLM enrich endpoint (1 / 60 s).
+- **PII-redaction helper** scrubs API keys / emails / phone numbers from log messages before they hit syslog.
+
+Audit posture:
+- **0 CVEs** across 90+ transitive dependencies (`pip-audit`).
+- **0 new findings** in the static security scan vs baseline (`bandit`).
+- **All ruff checks passing** on every commit.
 
 Full threat model + posture in the source repo at `docs/security.md` (becomes public when v0.1.0 ships).
 
