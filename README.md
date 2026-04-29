@@ -114,6 +114,44 @@ Claude calls OpenPersona's MCP server (`who_owes_me`,
 You fire off 2 intros in the 5 minutes before the call. Your chat
 data never left your Mac. Maya never has to remind you.
 
+### "I haven't seen David in a year. Meeting in 3 hours. Cold."
+
+> **David Liu**, sat at the same portfolio dinner 11 months ago.
+> Today his EA put a 1-on-1 on your calendar — no agenda. You don't
+> remember what he does. You can't dig through three message apps
+> in 5 minutes. You feel slightly embarrassed.
+
+Click `[▸ Brief]` from The Week:
+
+> **Briefing · in 3h**
+> **David Liu** · Verge Capital · BD lead
+>
+> **Top of mind**
+> · birthday — May 6 (in 9 days, Taurus)
+> · school: Stanford CS '14 — same as you
+> · work: co-founded XYZ, acquired by Google 2022
+> · tag: VC · tag: AI-infra
+>
+> **Where you stand**
+> · You owe: 2 ML intros (6 weeks pending — same row)
+>
+> **Last we talked** · 11mo ago, iMessage:
+> > *"let's pick up after Q4"* — no follow-through
+>
+> **Worth bringing up**
+> · He mentioned wanting intros to portfolio engineers (last sync,
+>   no resolution)
+
+You walk in knowing his backstory, the unfinished thread, and his
+birthday. Awkward becomes warm — and the thread that's been
+hanging for 11 months finally closes.
+
+The same panel flips to **Recap** mode 2 hours after the meeting:
+*"What was discussed"* (chat excerpts ±2h of the meeting time),
+*"Loose threads still open"* (anything mentioned that didn't
+crystallize into a commitment), feeding low-confidence items
+straight into the Inbox for one-click confirm.
+
 ---
 
 ## Features — what you see and use
@@ -126,7 +164,7 @@ next section.
 |---|---|
 | **Today · 3 things** | The first thing on the Self-View. Top 3 priorities ranked deterministically across overdue / due-today / today's events / silent-contacts-with-pending-promises. No decision fatigue, no "AI ranking" black box. |
 | **Promise Grid** | `People × Time` matrix. Red = overdue, yellow = due soon, green = on-track. Click a cell to drill into the underlying promises. |
-| **The Week** | This week's events grouped by day, **foregrounded by people, not by hour-of-day**. Person chips + an "N promises due before this meeting" hint on every card. Floating events (no participants resolved) get a 1-click binding flow. |
+| **The Week** | This week's events grouped by day, **foregrounded by people, not by hour-of-day**. Person chips + an "N promises due before this meeting" hint on every card. Floating events (no participants resolved) get a 1-click binding flow. Each event has a `[▸ Brief]` panel that flips between **briefing** (future event: top-of-mind facts, last we talked, worth bringing up) and **recap** (past event: what was discussed, loose threads). |
 | **Persona Card** | One person at a time: facts grouped by prefix (`bio:` / `tag:` / `preference:` / `date:` / `health:` / `read:` / `note:`), promises in both directions, recent interactions. Every row traces back to the source message. |
 | **Inbox** | Low-confidence extractions awaiting your call. Accept · dismiss · or **edit** the wording, deadline, or who-promised-whom inline before keeping it. Optional ☑ schedules a 1-hour focus block 24 h before the deadline. |
 
@@ -142,7 +180,7 @@ product.
 | **Auto-extract daemon** | launchd ingests new messages every 5 min from your wired collectors — no manual `extract` typing. Per-collector state so failures retry without re-scanning. |
 | **LLM extractors** | Two: the **commitment extractor** (high-confidence explicit promises stated in a message) and the **expectation extractor** (low-confidence inferred promises — unanswered questions, stale "let me check" offers, cadence breaks). BYO LLM key (DeepSeek / OpenAI / Anthropic / Ollama). |
 | **Calendar bidirectional** | `push-calendar` writes promises as macOS Calendar events; `pull-calendar` reads events back into the graph; event reschedules cascade to anchored promises so deadlines move with their underlying meetings. |
-| **MCP server** (9 tools) | Claude Desktop / Cursor / any MCP client queries your Persona graph over stdio. 8 read tools + 1 write-via-Inbox tool. The agent-portable layer that turns your Persona into universal AI memory. See [`docs/mcp.md`](docs/mcp.md). |
+| **MCP server** (10 tools) | Claude Desktop / Cursor / any MCP client queries your Persona graph over stdio. 8 read tools + 1 write-via-Inbox tool + 1 briefing-synthesis tool (`event_brief`). The agent-portable layer that turns your Persona into universal AI memory. See [`docs/mcp.md`](docs/mcp.md). |
 | **Local-first storage** | SQLite + per-person Markdown on your Mac. Atomic writes + per-path locks. Zero cloud, ever. The graph is `git diff`-able and survives the product. |
 
 ---
@@ -213,13 +251,13 @@ Roughly **~6 weeks out** from this writeup, give or take.
 The README isn't aspirational. The private core (separate repo,
 not linked here on purpose) is actively developed today:
 
-- **5 UI surfaces · 9 MCP tools · 6 collector adapters** — every
+- **5 UI surfaces · 10 MCP tools · 6 collector adapters · briefing/recap panel** — every
   capability listed above is built and runs locally on the author's
   Mac. Skeletons are honestly flagged in the Capabilities table
   pending real-data tuning.
-- **279 tests passing** across extractors, store, API, MCP, and CLI
+- **288 tests passing** across extractors, store, API, MCP, and CLI
   — green on every commit.
-- **55+ commits** since first push; daily activity visible on
+- **60+ commits** since first push; daily activity visible on
   [@Chen17-sq](https://github.com/Chen17-sq)'s public contribution
   graph (private repo commits surface there with "private contributions
   enabled" turned on).
