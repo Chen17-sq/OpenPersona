@@ -294,13 +294,17 @@ real iMessage / WeChat history.
 
 ---
 
-## Privacy
+## Privacy & security
 
 - **Zero cloud by default**. Every byte stays on your Mac.
 - **BYO LLM key** (OpenAI / Anthropic / DeepSeek / Ollama / LM Studio). Stored in macOS Keychain.
 - **Per-source kill switch** — disable any contact, group, or app.
 - **One-shot forget** — `openpersona forget --person <id>` removes from SQLite + Markdown + sources.
 - **Sensitive content filter** — credit cards, verification codes, password formats are dropped at the collector layer, never reach the graph.
+- **Localhost-only API** by default; CLI refuses non-loopback bind without `--allow-public`. CSP + cache-no-store + audit log on every mutation. SQLite + Markdown chmod'd to `0700`.
+- **Optional bearer-token auth** for the paranoid (`OPENPERSONA_AUTH_TOKEN` env var); off by default since single-user CORS-fenced localhost doesn't need it for the typical attack model.
+
+Full threat model + posture in the source repo at `docs/security.md` (becomes public when v0.1.0 ships).
 
 ---
 
