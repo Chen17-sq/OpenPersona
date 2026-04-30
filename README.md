@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>People. Promises. Events.</b><br/>
-  Three primitives. One local graph. Any agent.
+  Who you know. What you owe whom. Who's drifting silent.
 </p>
 
 <p align="center">
@@ -11,17 +11,25 @@
 
 ---
 
-What you owe Bob by Friday. When you last saw Sarah. The Q3 deal you
-promised Tom on the last call.
+What you promised Bob on Wednesday is no longer in your head by Friday morning.
 
-OpenPersona extracts that from your real conversations — iMessage,
-WeChat, WhatsApp, Telegram, Outlook, your calendar — into a local
-graph any AI agent can query through MCP.
+Sara has been silent for 42 days. You can't even remember what you last talked about.
 
-Your Persona, your machine, your keys.
+You're meeting David Liu this afternoon. A year since you last saw him — what he's working on now, you don't know.
 
-> "AI memory" is consensus by now. None of those products know about
-> Bob's deck. **We do.**
+These moments — when you should've remembered but didn't — have already
+happened. The raw evidence is scattered across your iMessage, WeChat,
+calendar, email. **What's missing isn't more recording. It's connecting
+what's already there.**
+
+OpenPersona turns your real conversations into a local graph: every person
+you know, what's happened between you, what each of you still owes the other.
+
+Your data stays on your Mac. Any AI agent reads it via MCP.
+
+> An AI-native personal CRM, built from your real conversations.
+> Promise tracking is the killer feature; relationship cadence is
+> the daily-driver. Your data, your machine, your keys.
 
 ---
 
