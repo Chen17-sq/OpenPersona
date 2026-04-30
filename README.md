@@ -397,7 +397,7 @@ not linked here on purpose) is actively developed today:
   every capability listed above is built and runs locally on the
   author's Mac. Skeletons are honestly flagged in the Capabilities
   table pending real-data tuning.
-- **542 tests passing · ruff clean · pip-audit 0 CVEs · bandit baseline-clean · prompt-baseline locked · svelte-check 0 TS errors** —
+- **550 tests passing · ruff clean · pip-audit 0 CVEs · bandit baseline-clean · prompt-baseline locked · svelte-check 0 TS errors** —
   green on every commit; security tooling pinned in dev deps;
   prompt files hashed so any change requires a deliberate baseline bump.
 - **150+ commits** since first push; daily activity visible on
@@ -440,7 +440,7 @@ Audit posture:
 - **0 new findings** in the static security scan vs baseline (`bandit` w/ tracked baseline file).
 - **All ruff checks passing** on every commit.
 - **Prompt regression suite** — every LLM prompt has a baseline hash; CI fails on unintentional drift (`tests/test_prompt_regression.py` + `.prompt-baseline.json`).
-- **542 tests** across collectors, extractors, store, API, MCP, CLI, packaging, readiness, SPA / CSP regressions, external calendars, persona / fact inline edit.
+- **550 tests** across collectors, extractors, store, API, MCP, CLI, packaging, readiness, SPA / CSP regressions, external calendars, persona / fact inline edit.
 
 Full threat model + posture ships in the private alpha bundle.
 
@@ -457,7 +457,7 @@ Full threat model + posture ships in the private alpha bundle.
 
 The "skeleton" honesty: WhatsApp / Telegram / Outlook / Notion / Linear
 collectors, inferred-promise extractor, event-anchored resolver — all are
-wired end-to-end with mocked transports + 542 tests, but haven't yet run
+wired end-to-end with mocked transports + 550 tests, but haven't yet run
 against real wacrawl output / real Telegram dialogs / real Outlook
 mailboxes / real Notion comment streams / real Linear issue threads.
 `TODO(real-data):` markers in each file flag exactly what tunes once
