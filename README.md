@@ -215,7 +215,7 @@ straight into the Inbox for one-click confirm.
 
 ## Features — what you see and use
 
-The nine surfaces in the local web UI at `localhost:7600`. Each one
+The ten surfaces in the local web UI at `localhost:7600`. Each one
 renders a slice of your Persona graph; what's underneath is in the
 next section.
 
@@ -301,7 +301,7 @@ That's it. Six tables. Forever.
 ## Architecture — we own the graph, not the cameras
 
 ```
-surface       SvelteKit UI (localhost:7600, 9 surfaces) + MCP server (10 tools, stdio)
+surface       SvelteKit UI (localhost:7600, 10 surfaces) + MCP server (10 tools, stdio)
 persona       SQLite + Markdown — atomic, lockable, git-diffable
 extractors    LLM-driven: commitment + expectation (inferred), facts,
               entity resolution, event-phrase resolver
