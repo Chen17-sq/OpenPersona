@@ -66,7 +66,7 @@ how you'd use it.
 
 ## Use cases
 
-Four moments where OpenPersona earns its keep. Every one is the kind
+Five moments where OpenPersona earns its keep. Every one is the kind
 of "I should've remembered, but I didn't" you've had this quarter.
 
 ### "Wednesday night I promised Bob the OnePager. Friday morning I forgot."
@@ -193,21 +193,23 @@ straight into the Inbox for one-click confirm.
 
 ---
 
-## Screens
+## Surfaces
 
-> Screenshots get refreshed on each public-alpha milestone — see
-> [`docs/screenshots/README.md`](docs/screenshots/README.md) for
-> the capture process. Currently captured at v0 code-complete (~Apr 29 2026).
+> Screenshots will land here at the public-alpha milestone.
+> Until then, the descriptions are the surface. Captured at v0
+> code-complete; updated as surfaces ship.
 
-| | |
+| Surface | What you do there |
 |---|---|
-| ![Self-View](docs/screenshots/self-view.png) | **Self-View · `localhost:7600/`** — *Today · 3 things* leads, then by-the-numbers, then overdue / due-this-week / recent-people. The first thing you see in the morning. |
-| ![The Week](docs/screenshots/the-week.png) | **The Week · `localhost:7600/calendar`** — events grouped by day, foregrounded by people. Floating events have red borders + a `[+ Add person]` flow. Each card has `[▸ Brief]`. |
-| ![Briefing panel](docs/screenshots/briefing-panel.png) | **Briefing panel** — slide-out from any event. *Top of mind* (school, work, birthday) · *Where you stand* (open promises both ways) · *Last we talked* · *Worth bringing up* (loose threads). |
-| ![Recap panel](docs/screenshots/recap-panel.png) | **Recap panel** — same surface, flipped to past events. *What was discussed* · *Loose threads still open* → feeds the Inbox. |
-| ![Inbox edit](docs/screenshots/inbox-edit.png) | **Inbox · `localhost:7600/inbox`** — accept / dismiss / *edit* the wording, deadline, who-promised-whom inline. Optional ☑ schedules a focus block 24 h before the deadline. |
-| ![Persona Card](docs/screenshots/persona-card.png) | **Persona Card · `localhost:7600/people/<id>`** — Next-meeting hint + `[+ Add fact]` + `[✨ Enrich with LLM]` at the top, then facts grouped by prefix, then promises both directions. |
-| ![The Network](docs/screenshots/the-network.png) | **The Network · `localhost:7600/network`** — force-directed relationship graph. Nodes scale by pending-load. Black centre = `me`. Red = high-load relationships. Click a node → that Persona Card. |
+| **Self-View · `localhost:7600/`** | *Today · 3 things* (each row is actionable: ✓ Done · 🔔 Snooze · ✎ Edit · ✗ Dismiss). Tabs to *Promise Grid* (people × time matrix) and *The Network* (force-directed relationship graph). The first thing you see in the morning. |
+| **Calendar · `localhost:7600/calendar`** | Three views — **Month** grid · **Week** Apple-style timetable (7-col, hour grid, all-day strip) · **Day** vertical timeline. Click any empty slot to create an event in-place; pushes to macOS Calendar so it round-trips through your Google / iCloud / Exchange sync. |
+| **People · `localhost:7600/people`** | iPhone-Contacts-style list — alphabetical with sticky letter headers, A–Z jump-bar, search, four sort modes (A–Z · Recent · Silent · Load). Silent sort surfaces cadence breaks: who's drifted into silence ranked by oldest-last-seen. |
+| **Persona Card · `localhost:7600/people/<id>`** | Editable inline: click any fact value to rename, click 🔁 Re-engage cadence to set "every N weeks" reminder, click 🎤 Voice note to dictate a memo (auto-transcribed; optional commitment extractor pipes promises into Inbox for review). |
+| **Briefing panel** — slide-out from any event | *Top of mind* (school, work, birthday) · *Where you stand* (open promises both ways) · *Last we talked* · *Worth bringing up* (loose threads). Editable inline notes section for prep / recap. |
+| **Inbox · drawer + `localhost:7600/inbox`** | Persistent badge in the top-bar; click → slide-in drawer with quick triage (Accept · Dismiss · Edit). Deep-edit at the route. Low-confidence extractions queue here for review before joining the trusted promise stream. |
+| **Settings · `localhost:7600/settings`** | LLM provider · Collectors Gateway (per-source status + extract-now per collector) · External Calendars (Google / iCloud / Outlook via secret iCal URL) · Auto-extract daemon · Privacy & data. |
+| **Onboarding · `localhost:7600/onboarding`** | Six-step setup dashboard. Polls `/api/readiness` every 4 s so you watch dots flip green as you fix things. Daemon install + first extract are in-UI buttons (no copy-paste from CLI). |
+| **Tour · `localhost:7600/tour`** | Five-scene value showcase, pure mock data — runs without setup, LLM key, or permissions. ⌘K command palette opens from anywhere. |
 
 ---
 
@@ -393,7 +395,7 @@ not linked here on purpose) is actively developed today:
   every capability listed above is built and runs locally on the
   author's Mac. Skeletons are honestly flagged in the Capabilities
   table pending real-data tuning.
-- **478 tests passing · ruff clean · pip-audit 0 CVEs · bandit baseline-clean · prompt-baseline locked · svelte-check 0 TS errors** —
+- **508 tests passing · ruff clean · pip-audit 0 CVEs · bandit baseline-clean · prompt-baseline locked · svelte-check 0 TS errors** —
   green on every commit; security tooling pinned in dev deps;
   prompt files hashed so any change requires a deliberate baseline bump.
 - **150+ commits** since first push; daily activity visible on
@@ -436,7 +438,7 @@ Audit posture:
 - **0 new findings** in the static security scan vs baseline (`bandit` w/ tracked baseline file).
 - **All ruff checks passing** on every commit.
 - **Prompt regression suite** — every LLM prompt has a baseline hash; CI fails on unintentional drift (`tests/test_prompt_regression.py` + `.prompt-baseline.json`).
-- **478 tests** across collectors, extractors, store, API, MCP, CLI, packaging, readiness, SPA / CSP regressions, external calendars, persona / fact inline edit.
+- **508 tests** across collectors, extractors, store, API, MCP, CLI, packaging, readiness, SPA / CSP regressions, external calendars, persona / fact inline edit.
 
 Full threat model + posture ships in the private alpha bundle.
 
@@ -453,7 +455,7 @@ Full threat model + posture ships in the private alpha bundle.
 
 The "skeleton" honesty: WhatsApp / Telegram / Outlook / Notion / Linear
 collectors, inferred-promise extractor, event-anchored resolver — all are
-wired end-to-end with mocked transports + 478 tests, but haven't yet run
+wired end-to-end with mocked transports + 508 tests, but haven't yet run
 against real wacrawl output / real Telegram dialogs / real Outlook
 mailboxes / real Notion comment streams / real Linear issue threads.
 `TODO(real-data):` markers in each file flag exactly what tunes once
