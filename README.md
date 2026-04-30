@@ -215,7 +215,7 @@ straight into the Inbox for one-click confirm.
 
 ## Features — what you see and use
 
-The ten surfaces in the local web UI at `localhost:7600`. Each one
+The eleven surfaces in the local web UI at `localhost:7600`. Each one
 renders a slice of your Persona graph; what's underneath is in the
 next section.
 
@@ -223,12 +223,14 @@ next section.
 |---|---|
 | **Today · 3 things** | The first thing on the Self-View. Top 3 priorities ranked deterministically across overdue / due-today / today's events / silent-contacts-with-pending-promises. No decision fatigue, no "AI ranking" black box. |
 | **Promise Grid** | `People × Time` matrix. Red = overdue, yellow = due soon, green = on-track. Click a cell to drill into the underlying promises. |
-| **The Calendar** | Three views — **Month** (7×6 grid), **Week** (Apple/Notion-style 7-column timetable with hour grid + all-day strip + side-by-side overlap layout), **Day** (vertical timeline). Click any empty time slot to **create an event in-place**, optionally pushing it to macOS Calendar so it round-trips through your Google / iCloud / Exchange sync. Each event has a `[▸ Brief]` panel that flips between **briefing** (future event: top-of-mind facts, last we talked, worth bringing up) and **recap** (past event: what was discussed, loose threads). External calendars connect via secret iCal URL on Settings. |
+| **The Calendar** | Three views — **Month** (7×6 grid), **Week** (Apple/Notion-style 7-column timetable with hour grid + all-day strip + side-by-side overlap layout — full 24h scrollable, defaults to "now" on open, sticky day/all-day headers), **Day** (vertical timeline). Click any empty time slot to **create an event in-place**, optionally pushing it to macOS Calendar so it round-trips through your Google / iCloud / Exchange sync (the modal pre-flights the EventKit permission state and offers retry + "Open System Settings" deeplink on push failure). Each event has a `[▸ Brief]` panel that flips between **briefing** (future event: top-of-mind facts, last we talked, worth bringing up) and **recap** (past event: what was discussed, loose threads), with a danger-zone **Delete event** at the bottom that optionally also removes the EKEvent from Calendar.app. External calendars connect via secret iCal URL on Settings. |
+| **People — the Roster** | Contacts-style A–Z list at `/people`. Sort by name / recent / silent / load. Click any name → Persona Card. |
 | **Persona Card** | One person at a time: facts grouped by prefix (`bio:` / `tag:` / `preference:` / `date:` / `health:` / `read:` / `note:`), promises in both directions, recent interactions. **Click any value to edit inline** — change "Foo Capital" to "Bar Capital", rename a clunky LLM-chosen key, fix aliases — without leaving the page. Every row traces back to the source message. |
 | **Inbox** | Low-confidence extractions awaiting your call. Accept · dismiss · or **edit** the wording, deadline, or who-promised-whom inline before keeping it. Optional ☑ schedules a 1-hour focus block 24 h before the deadline. |
 | **The Network** | Force-directed graph of People as nodes, Promises + shared Events as weighted edges. Red = high-load relationship (≥ 5 pending). Click a node → that Persona Card. The "deal-flow user" view of who's connected to whom. |
 | **Onboarding** | Six-step setup dashboard at `/onboarding`. Polls `/api/readiness` every 4 s so you watch dots flip green as you fix things in another terminal. **Daemon install + first extract are now in-UI buttons** — no copy-paste-from-CLI required. Animated progress meter, ←/→ keyboard nav. The home page bounces here when the graph is empty. |
-| **Settings** | Persistent control panel at `/settings` — five sections: LLM provider · **Collectors Gateway** (per-source card with status / last sync / "extract last 7 days" button) · **External Calendars** (Google / iCloud / Outlook via secret iCal URL — paste, sync, remove) · Auto-extract daemon (install / uninstall / interval) · Privacy & data. The control center for everything onboarding set up. |
+| **Settings** | Persistent control panel at `/settings` — six sections: LLM provider · **Collectors Gateway** (per-source card with status / last sync / "extract last 7 days" button) · **External Calendars** (Google / iCloud / Outlook via secret iCal URL — paste, sync, remove) · **macOS Calendar (write)** permission status with one-click "Open System Settings" deeplink and re-check button · Auto-extract daemon (install / uninstall / interval) · Privacy & data. The control center for everything onboarding set up. |
+| **Probe** | Public-facing wedge at `/probe` — paste a thread, see its promises. Stateless, no DB writes, runs against the same extractor the daemon uses. The "try without installing anything" entry point. |
 | **Tour** | Five-scene value showcase at `/tour`. Pure mock data — runs without any setup, any LLM key, any permissions. Each scene has a setup / trap / fix / outcome arc with a stylised "screenshot" of the surface that solves it. The fastest way to show someone what this is. |
 
 ## Capabilities — what runs underneath
@@ -257,7 +259,7 @@ honest:
 |---|---|---|
 | **Collectors** | iMessage · WeChat (`wechat-cli`) · macOS Calendar (push + pull) · External iCal URL (Google / iCloud / Outlook / Fastmail / Notion / Cal.com) | WhatsApp · Telegram · Outlook (mailbox) · Notion (comments) · Linear (issues) · CalDAV · native Google OAuth |
 | **Extractors** | Commitment extractor (explicit "I'll send X by Y") | Expectation extractor (inferred — needs prompt tuning against real cadence-break patterns) |
-| **Surfaces** | All nine — Today · Grid · Calendar (Month/Week/Day) · Card · Inbox · Network · Onboarding · Settings · Tour | — |
+| **Surfaces** | All eleven — Today · Grid · Calendar (Month/Week/Day) · People · Card · Inbox · Network · Onboarding · Settings · Probe · Tour | — |
 | **In-UI editing** | Persona Card facts (click value → edit) · Person profile (name / relationship / aliases) · Event participants · Promise wording / deadline / who-promised-whom · Quick-create event from Week timetable | — |
 | **MCP** | All 10 tools — exposable to Claude Desktop / Cursor today | — |
 | **CLI** | `init` · `extract` · `sync` · `auto-extract` · `serve` · `tick` · `mcp` · `quickstart` · `install` · `doctor` · `forget` · `merge` · `search` · `backup` · `restore` · `push-calendar` · `pull-calendar` · `enrich` | — |
@@ -301,7 +303,7 @@ That's it. Six tables. Forever.
 ## Architecture — we own the graph, not the cameras
 
 ```
-surface       SvelteKit UI (localhost:7600, 10 surfaces) + MCP server (10 tools, stdio)
+surface       SvelteKit UI (localhost:7600, 11 surfaces) + MCP server (10 tools, stdio)
 persona       SQLite + Markdown — atomic, lockable, git-diffable
 extractors    LLM-driven: commitment + expectation (inferred), facts,
               entity resolution, event-phrase resolver
@@ -395,7 +397,7 @@ not linked here on purpose) is actively developed today:
   every capability listed above is built and runs locally on the
   author's Mac. Skeletons are honestly flagged in the Capabilities
   table pending real-data tuning.
-- **508 tests passing · ruff clean · pip-audit 0 CVEs · bandit baseline-clean · prompt-baseline locked · svelte-check 0 TS errors** —
+- **542 tests passing · ruff clean · pip-audit 0 CVEs · bandit baseline-clean · prompt-baseline locked · svelte-check 0 TS errors** —
   green on every commit; security tooling pinned in dev deps;
   prompt files hashed so any change requires a deliberate baseline bump.
 - **150+ commits** since first push; daily activity visible on
@@ -438,7 +440,7 @@ Audit posture:
 - **0 new findings** in the static security scan vs baseline (`bandit` w/ tracked baseline file).
 - **All ruff checks passing** on every commit.
 - **Prompt regression suite** — every LLM prompt has a baseline hash; CI fails on unintentional drift (`tests/test_prompt_regression.py` + `.prompt-baseline.json`).
-- **508 tests** across collectors, extractors, store, API, MCP, CLI, packaging, readiness, SPA / CSP regressions, external calendars, persona / fact inline edit.
+- **542 tests** across collectors, extractors, store, API, MCP, CLI, packaging, readiness, SPA / CSP regressions, external calendars, persona / fact inline edit.
 
 Full threat model + posture ships in the private alpha bundle.
 
@@ -455,7 +457,7 @@ Full threat model + posture ships in the private alpha bundle.
 
 The "skeleton" honesty: WhatsApp / Telegram / Outlook / Notion / Linear
 collectors, inferred-promise extractor, event-anchored resolver — all are
-wired end-to-end with mocked transports + 508 tests, but haven't yet run
+wired end-to-end with mocked transports + 542 tests, but haven't yet run
 against real wacrawl output / real Telegram dialogs / real Outlook
 mailboxes / real Notion comment streams / real Linear issue threads.
 `TODO(real-data):` markers in each file flag exactly what tunes once
