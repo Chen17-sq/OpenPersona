@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <code>v0.1.0</code> · macOS · <b>private alpha</b> · public source ~v1.1
+  <code>v0.2.0</code> · macOS · <b>private alpha</b> · public source ~v0.3 (~1 mo)
 </p>
 
 ---
@@ -101,12 +101,12 @@ OpenPersona reads conversations from the IM platforms you actually live in.
 |---|---|---|
 | **iMessage** | ✅ shipping | Direct `chat.db` read · SMS spam filter · service-aware |
 | **WeChat** | ✅ shipping | Via [`wechat-cli`](https://github.com/Chen17-sq/wechat-cli) subprocess |
-| **WhatsApp** | 🛠 v1.1 | Collector skeleton in place; WhatsApp Web protocol |
-| **Telegram** | 🛠 v1.1 | Telethon library, bot tokens supported |
-| **Gmail** | 🛠 v1.1 | OAuth + IMAP fallback |
-| **Outlook** | 🛠 v1.1 | Skeleton wired; awaiting auth flow |
-| **Slack** | 📋 v2 | Bot user OAuth |
-| **Discord** | 📋 v2 | DMs + opt-in channels |
+| **WhatsApp** | 🛠 v0.3 | Collector skeleton in place; WhatsApp Web protocol |
+| **Telegram** | 🛠 v0.3 | Telethon library, bot tokens supported |
+| **Gmail** | 🛠 v0.3 | OAuth + IMAP fallback |
+| **Outlook** | 🛠 v0.3 | Skeleton wired; awaiting auth flow |
+| **Slack** | 📋 v1.0 | Bot user OAuth |
+| **Discord** | 📋 v1.0 | DMs + opt-in channels |
 | **Your platform** | 🤝 anytime | [Collector Protocol](docs/architecture.md) — 3 record types, 2 functions, ship a PR |
 
 The collector layer is **one protocol** — three record types (`Source`, `Message`,
@@ -171,6 +171,34 @@ For Claude Desktop / Cursor integration:
 ```bash
 op mcp   # stdio MCP server — see docs/mcp.md
 ```
+
+---
+
+## For developers — OpenPersona as a layer
+
+OpenPersona is **not just a product, it's a layer others can plug into**.
+Three integration shapes are first-class:
+
+### MCP (recommended for AI agents)
+The MCP server (15 tools) gives Claude Desktop / Cursor / any
+MCP-compatible agent direct access to your relationship graph via
+stdio. See [`docs/mcp.md`](docs/mcp.md).
+
+### HTTP API (Agent Native, for everything else)
+
+| Endpoint | Purpose |
+|---|---|
+| `GET  /api/changes?since=<iso>` | Poll the change feed since cursor |
+| `GET  /api/schema/{entity}` | Per-entity JSON Schema for code-gen |
+| `POST /api/webhooks` | Register a callback URL — get POST'd on changes |
+| `POST /api/bulk/promises` | Multi-row insert with retry-safe `idempotency_key` |
+| `GET  /api/openapi.json` | Full OpenAPI 3.1 spec |
+| `GET  /api/docs` | Interactive Swagger UI |
+
+### Collector Protocol (for new IM platforms)
+Three record types, two functions to implement. Anything that emits
+messages can plug in. See
+[`docs/architecture.md`](docs/architecture.md).
 
 ---
 
@@ -240,10 +268,11 @@ for the tool inventory.
 
 | | What | Status |
 |---|---|---|
-| **v0** *(retired)* | 5 dashboard surfaces · Promise Grid · Calendar push/pull · Inbox edit · 15-tool MCP · auto-extract daemon | superseded by v1 pivot |
-| **v1** *(now, private alpha)* | The pivot — lock widget · push · calendar injection · chat hotkey · streaming extract · AI-native voice · tone calibration · implicit feedback | actively shipping |
-| **v1.1** *(+1 mo)* | WhatsApp · Telegram · Gmail · Outlook collectors · Ollama local mode · PyPI publish · **source opens here** | — |
-| **v2** *(+3 mo)* | Slack · Discord · Apple Health · cross-device sync · plugin marketplace | — |
+| **v0** *(retired)* | 5 dashboard surfaces · Promise Grid · Calendar push/pull · Inbox edit · 15-tool MCP · auto-extract daemon | superseded by v0.1 pivot |
+| **v0.1** | Pivot — lock-widget plumbing · push · calendar injection · chat hotkey backend · streaming extract · commitment-strength three-tier · AI-narrated portrait · voice-matched drafts · observer + correlator | shipped |
+| **v0.2** *(now, private alpha)* | UX polish (Toast / EmptyState / `?` / optimistic UI) · setup wizard + sources table · `op morning-push` daemon · terminal-notifier backend · **Agent Native HTTP API** (/changes, /schema, /webhooks, /bulk + idempotency) · status banner | shipped |
+| **v0.3** *(+1 mo)* | WhatsApp · Telegram · Gmail · Outlook real wiring (replace skeletons) · Ollama local mode · webhook delivery daemon · PyPI publish · **source opens here** | — |
+| **v1.0** *(+3 mo)* | Slack · Discord · Apple Health · cross-device sync · plugin marketplace · Lock-screen widget Xcode signing | — |
 
 [`docs/roadmap.md`](docs/roadmap.md) for the day-by-day breakdown.
 [`docs/product-spec.md`](docs/product-spec.md) for the canonical product definition.
@@ -252,12 +281,16 @@ for the tool inventory.
 
 ## Contributing
 
-Once source opens (~v1.1), the two highest-leverage contributions will be:
+Once source opens (~v0.3), the three highest-leverage contributions will be:
 
 1. **A new collector** — implement [`Collector Protocol`](docs/architecture.md) for any
    IM / email / chat platform you live in. Three record types, two functions, real test
    coverage already in place.
-2. **AI-native voice tuning** — prompts living in the codebase. PRs improving voice
+2. **An agent integration** — OpenPersona ships an Agent Native HTTP API
+   (`/api/changes` polling, `/api/schema` introspection, `/api/webhooks` push,
+   `/api/bulk` retry-safe writes). Build a CLI / browser extension / mobile app on
+   top, link it back here.
+3. **AI-native voice tuning** — prompts living in the codebase. PRs improving voice
    consistency, language detection, per-person tone matching, or commitment-strength
    classification welcomed.
 
