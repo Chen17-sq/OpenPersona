@@ -20,17 +20,17 @@
 
 I built a feature graveyard.
 
-Six months ago, OpenPersona was a *"local-first commitment graph"* — extract every promise,
-fact, and event from your IM history into a queryable database, then visualise it. I shipped
+Two weeks ago, OpenPersona was a *"local-first commitment graph"* — extract every promise,
+fact, and event from your IM history into a queryable database, then visualise it. I built
 30+ CLI commands. 5 dashboard views (Today / Inbox / Grid / Self View / Search). 5
 collectors. A launchd daemon. A menubar app. A 15-tool MCP server. SvelteKit + FastAPI +
 SQLite + Markdown round-trip. 700+ tests. It looked impressive on paper.
 
-I rarely opened it.
+I barely opened it.
 
-The diagnosis took longer than it should have. Of 30+ CLI commands, I used 4. I never
-voluntarily opened Inbox or Grid. Of 200 extracted promises, half were noise. The
-product's most damning flaw: **the author wasn't using it.**
+Two weeks of dogfood is short, but the signal was already loud: of 30+ CLI commands, I used
+4. I never voluntarily opened Inbox or Grid. Of 200 extracted promises, half were noise.
+The product's most damning flaw: **the author wasn't using it.**
 
 The bug wasn't quality. It was *category*. I had built a SaaS-style CRM for a job that
 doesn't have a SaaS shape. Real relationships aren't promises and facts in a table —
