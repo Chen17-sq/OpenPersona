@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <code>v0.3.0</code> · macOS · <b>private alpha</b> · public source ~v0.3.1
+  <code>v0.4.0</code> · macOS · <b>private alpha</b> · public source ~v0.4.x
 </p>
 
 ---
@@ -101,12 +101,13 @@ OpenPersona reads conversations from the IM platforms you actually live in.
 |---|---|---|
 | **iMessage** | ✅ shipping | Direct `chat.db` read · SMS spam filter · service-aware |
 | **WeChat** | ✅ shipping | Via [`wechat-cli`](https://github.com/Chen17-sq/wechat-cli) subprocess |
-| **WhatsApp** | 🛠 v0.3 | Collector skeleton in place; WhatsApp Web protocol |
-| **Telegram** | 🛠 v0.3 | Telethon library, bot tokens supported |
-| **Gmail** | 🛠 v0.3 | OAuth + IMAP fallback |
-| **Outlook** | 🛠 v0.3 | Skeleton wired; awaiting auth flow |
-| **Slack** | 📋 v1.0 | Bot user OAuth |
-| **Discord** | 📋 v1.0 | DMs + opt-in channels |
+| **WhatsApp** | ✅ v0.4 | `wacrawl` live + Export-Chat .txt offline path (`OPENPERSONA_WHATSAPP_EXPORT_DIR`) |
+| **Telegram** | ✅ v0.4 | Telethon live + Telegram Desktop result.json offline path (`OPENPERSONA_TELEGRAM_EXPORT_JSON`) |
+| **Gmail** | ✅ v0.4 | Stdlib `imaplib` IMAP path · Gmail API skeleton awaiting OAuth flow |
+| **Outlook** | ✅ v0.4 | Microsoft Graph live + .eml directory offline (`OPENPERSONA_OUTLOOK_EML_DIR`) |
+| **Slack** | ✅ v0.4 | Workspace export / `slackdump` offline (`OPENPERSONA_SLACK_EXPORT_DIR`) |
+| **Discord** | ✅ v0.4 | Official data export + DiscordChatExporter JSON (`OPENPERSONA_DISCORD_EXPORT_DIR`) |
+| **Apple Health** | ✅ v0.4 | Export ZIP → `health:*` facts on `me` (`op apple-health-sync`) |
 | **Your platform** | 🤝 anytime | [Collector Protocol](docs/architecture.md) — 3 record types, 2 functions, ship a PR |
 
 The collector layer is **one protocol** — three record types (`Source`, `Message`,
@@ -128,17 +129,18 @@ We're explicit about this because the alternative is dishonest.
 - **Cost** (DeepSeek V4 Flash, default): roughly **$0.50–$5 per month** depending on IM
   volume + AI-native depth (per-meeting briefs, voice-matched pushes, weekly persona
   refresh).
-- **Fully local mode** (v1.1): pass `--local-only` to route everything through Ollama
-  (Qwen 32B or similar). Slower; quality varies; your data never leaves your Mac.
+- **Fully local mode**: pass `--local-only` to route everything through Ollama (Qwen
+  32B or similar). Slower; quality varies; your data never leaves your Mac.
 - **Sensitive content filter**: credit cards, OTP codes, password formats are dropped at
   the collector layer before any LLM sees them.
 - **Per-person killswitch + bulk forget**: `op forget --person <id>` atomically removes a
   person from every table, audit-logged.
 
 **Posture (private alpha)**: 0 CVEs across 90+ transitive deps · `bandit` baseline clean
-· `ruff` green on every commit · 720+ tests across collectors / extractors / store / API
-/ MCP / CLI / SPA / CSP / inline-edit. Full threat model ships in the alpha bundle and
-moves to `docs/security.md` at public source open.
+· `ruff` green on every commit · **955 tests** across collectors / extractors / store /
+API / MCP / CLI / agent layer / SPA / CSP / inline-edit / widget xcodeproj generator /
+schema index audit. Full threat model ships in the alpha bundle and moves to
+`docs/security.md` at public source open.
 
 ---
 
@@ -180,9 +182,10 @@ OpenPersona is **not just a product, it's a layer others can plug into**.
 Three integration shapes are first-class:
 
 ### MCP (recommended for AI agents)
-The MCP server (15 tools) gives Claude Desktop / Cursor / any
-MCP-compatible agent direct access to your relationship graph via
-stdio. See [`docs/mcp.md`](docs/mcp.md).
+The MCP server (**17 tools** — 8 read + 6 write + 1 brief synth + 2
+archive) gives Claude Desktop / Cursor / any MCP-compatible agent
+direct access to your relationship graph + the local IM message
+corpus via stdio. See [`docs/mcp.md`](docs/mcp.md).
 
 ### HTTP API (Agent Native, for everything else)
 
@@ -213,10 +216,11 @@ What's gating it:
 - **Real-data validation of v1 surfaces** — pre-meeting brief / push voice / chat hotkey
   need a week of someone's real iMessage + WeChat history to tune. Closed alpha lets me
   iterate without churning a public commit log.
-- **Lock screen widget** — Swift / WidgetKit work in progress; opens once the binary
-  signs and notarises.
-- **WhatsApp / Telegram / Gmail collectors** — currently skeletons; v1.1 wires them
-  against real mailboxes, then opens.
+- **Lock screen widget** — Swift / WidgetKit work in progress. v0.4 ships the Xcode
+  project generator (`op widget-xcodeproj`); signing / notarisation is the remaining gate.
+- **Gmail OAuth completion** — IMAP path ships in v0.4; the OAuth refresh-token flow is
+  the polish gate for full Gmail API. WhatsApp / Telegram / Outlook / Slack / Discord all
+  shipped v0.4 offline-export paths.
 
 What's already public:
 - This repo (`Chen17-sq/OpenPersona`) tracks **strategy + roadmap + contact**. Everything
@@ -241,18 +245,25 @@ extractors hold up against a week of someone's real iMessage / WeChat / Gmail hi
 ## Architecture
 
 ```
-surface       Lock screen widget (Swift) · Push (macOS native) · Calendar event injection ·
-              ⌘⇧Space chat hotkey · Person page (Bauhaus, hidden by default) · MCP server (15 tools)
+surface       Lock screen widget (Swift, v0.4 xcodeproj generator) · Push (macOS native) ·
+              Calendar event injection · ⌘⇧Space chat hotkey · Person page (Bauhaus, hidden
+              by default) · MCP server (17 tools)
 
 intelligence  Streaming extract (per-message LLM judgment) · Per-person tone calibration ·
               Voice-matched AI push generation · Behavioural inference (last contact, cadence,
-              drift) · Implicit feedback observer (workflow interception, no buttons)
+              drift) · Implicit feedback observer (workflow interception, no buttons) ·
+              Wave E contact metadata (bio / relationship / preference / tag / date / school)
 
-persona       SQLite + per-person Markdown — atomic, lockable, git-diffable, round-trip safe
+persona       SQLite + per-person Markdown — atomic, lockable, git-diffable, round-trip safe ·
+              raw_messages archive (every message persisted, agents query via /api/messages
+              or MCP query_messages) · inner-circle tier persistence (top-20 / next-30,
+              recomputed nightly from attention_score)
 
 ────── Collector Protocol ──────
-collectors    iMessage · WeChat · WhatsApp (v1.1) · Telegram (v1.1) · Gmail (v1.1) ·
-              macOS Calendar (bidirectional) · iCal URL (Google / iCloud / Outlook) · your own
+collectors    iMessage · WeChat · WhatsApp (live + offline) · Telegram (live + offline) ·
+              Gmail (IMAP + API stub) · Outlook (Graph + .eml) · Slack (offline) · Discord
+              (offline) · Apple Health (export ZIP) · macOS Calendar (bidirectional) ·
+              iCal URL (Google / iCloud / Outlook) · your own
 ```
 
 We extract structured rows from conversations. We **don't** capture screens, OCR images,
@@ -272,9 +283,9 @@ for the tool inventory.
 | **v0** *(retired)* | 5 dashboard surfaces · Promise Grid · Calendar push/pull · Inbox edit · 15-tool MCP · auto-extract daemon | superseded by v0.1 pivot |
 | **v0.1** | Pivot — lock-widget plumbing · push · calendar injection · chat hotkey backend · streaming extract · commitment-strength three-tier · AI-narrated portrait · voice-matched drafts · observer + correlator | shipped |
 | **v0.2** *(now, private alpha)* | UX polish (Toast / EmptyState / `?` / optimistic UI / Person-page Svelte rewrite) · setup wizard + sources table · `op morning-push` daemon · terminal-notifier backend · **Agent Native HTTP API** (/changes, /schema, /webhooks, /bulk + idempotency) · status banner · **Master mode** (audit panel · conflict detection · staleness scorer · `op identity-merge` cross-source phone match · groups + group_members schema · conflict-resolve endpoint with master-review UI) | shipped |
-| **v0.3** *(now, partially shipped)* | **raw_messages archive** (persistent local IM corpus) · `op backfill` for full-history pulls · `/api/messages` agent retrieval · `op storage` report · webhook delivery daemon (v0.2 registrations now fire) · Ollama local-mode (`op setup --only ollama`) · group-chat LLM extraction (topic / convener / lurkers / mutual-intro) | shipped |
-| **v0.3.1** *(next)* | WhatsApp · Telegram · Gmail · Outlook real wiring · contact metadata deep-dive (signature / aliases / added_at) · PyPI publish · **source opens here** | — |
-| **v1.0** *(+3 mo)* | Slack · Discord · Apple Health · cross-device sync · plugin marketplace · Lock-screen widget Xcode signing | — |
+| **v0.3** *(shipped)* | **raw_messages archive** (persistent local IM corpus) · `op backfill` for full-history pulls · `/api/messages` agent retrieval · `op storage` report · webhook delivery daemon (v0.2 registrations now fire) · Ollama local-mode (`op setup --only ollama`) · group-chat LLM extraction (topic / convener / lurkers / mutual-intro) | shipped |
+| **v0.4** *(now, shipped)* | **Wave E contact metadata extractor** (bio / relationship / preference / tag / date / school / note with hallucination guard) · **inner-circle tier persistence** (top-20 inner / next-30 close from `attention_score`, daily 04:00 recompute) · **Person Page raw-messages viewer** (lazy-loaded archive timeline) · **MCP archive tools** (`query_messages` + `message_archive_stats` for external agents) · **6 new collector offline paths** (WhatsApp Export-Chat .txt / Telegram result.json / Gmail IMAP / Outlook .eml dir / Slack export / Discord export) · **schema index audit** (+6 hot-path indexes) · **Apple Health sync CLI** (`op apple-health-sync`) · **widget xcodeproj generator** (`op widget-xcodeproj`) | shipped |
+| **v1.0** *(+3 mo)* | Cross-device sync · plugin marketplace · Lock-screen widget signing & distribution · Gmail OAuth flow finishing · PyPI publish · **source opens here** | — |
 
 [`docs/roadmap.md`](docs/roadmap.md) for the day-by-day breakdown.
 [`docs/product-spec.md`](docs/product-spec.md) for the canonical product definition.
@@ -283,11 +294,13 @@ for the tool inventory.
 
 ## Contributing
 
-Once source opens (~v0.3), the three highest-leverage contributions will be:
+Once source opens (~v1.0), the three highest-leverage contributions will be:
 
 1. **A new collector** — implement [`Collector Protocol`](docs/architecture.md) for any
    IM / email / chat platform you live in. Three record types, two functions, real test
-   coverage already in place.
+   coverage already in place. v0.4 ships offline-export paths for WhatsApp / Telegram /
+   Gmail / Outlook / Slack / Discord — extending these to live API mode (e.g. Gmail
+   OAuth, Slack Web API) is a great next step.
 2. **An agent integration** — OpenPersona ships an Agent Native HTTP API
    (`/api/changes` polling, `/api/schema` introspection, `/api/webhooks` push,
    `/api/bulk` retry-safe writes). Build a CLI / browser extension / mobile app on
