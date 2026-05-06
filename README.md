@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <code>v0.2.0</code> · macOS · <b>private alpha</b> · public source ~v0.3 (~1 mo)
+  <code>v0.3.0</code> · macOS · <b>private alpha</b> · public source ~v0.3.1
 </p>
 
 ---
@@ -189,8 +189,9 @@ stdio. See [`docs/mcp.md`](docs/mcp.md).
 | Endpoint | Purpose |
 |---|---|
 | `GET  /api/changes?since=<iso>` | Poll the change feed since cursor |
+| `GET  /api/messages?person_id=…` | Query the **local IM archive** — read full history without re-pulling chat.db |
 | `GET  /api/schema/{entity}` | Per-entity JSON Schema for code-gen |
-| `POST /api/webhooks` | Register a callback URL — get POST'd on changes |
+| `POST /api/webhooks` | Register a callback URL — delivery daemon now active |
 | `POST /api/bulk/promises` | Multi-row insert with retry-safe `idempotency_key` |
 | `GET  /api/openapi.json` | Full OpenAPI 3.1 spec |
 | `GET  /api/docs` | Interactive Swagger UI |
@@ -271,7 +272,8 @@ for the tool inventory.
 | **v0** *(retired)* | 5 dashboard surfaces · Promise Grid · Calendar push/pull · Inbox edit · 15-tool MCP · auto-extract daemon | superseded by v0.1 pivot |
 | **v0.1** | Pivot — lock-widget plumbing · push · calendar injection · chat hotkey backend · streaming extract · commitment-strength three-tier · AI-narrated portrait · voice-matched drafts · observer + correlator | shipped |
 | **v0.2** *(now, private alpha)* | UX polish (Toast / EmptyState / `?` / optimistic UI / Person-page Svelte rewrite) · setup wizard + sources table · `op morning-push` daemon · terminal-notifier backend · **Agent Native HTTP API** (/changes, /schema, /webhooks, /bulk + idempotency) · status banner · **Master mode** (audit panel · conflict detection · staleness scorer · `op identity-merge` cross-source phone match · groups + group_members schema · conflict-resolve endpoint with master-review UI) | shipped |
-| **v0.3** *(+1 mo)* | WhatsApp · Telegram · Gmail · Outlook real wiring · group-chat extraction prompt (topic / convener / mutual-intro) · contact metadata deep-dive (signature / aliases / added_at) · Ollama local mode · webhook delivery daemon · PyPI publish · **source opens here** | — |
+| **v0.3** *(now, partially shipped)* | **raw_messages archive** (persistent local IM corpus) · `op backfill` for full-history pulls · `/api/messages` agent retrieval · `op storage` report · webhook delivery daemon (v0.2 registrations now fire) · Ollama local-mode (`op setup --only ollama`) · group-chat LLM extraction (topic / convener / lurkers / mutual-intro) | shipped |
+| **v0.3.1** *(next)* | WhatsApp · Telegram · Gmail · Outlook real wiring · contact metadata deep-dive (signature / aliases / added_at) · PyPI publish · **source opens here** | — |
 | **v1.0** *(+3 mo)* | Slack · Discord · Apple Health · cross-device sync · plugin marketplace · Lock-screen widget Xcode signing | — |
 
 [`docs/roadmap.md`](docs/roadmap.md) for the day-by-day breakdown.
