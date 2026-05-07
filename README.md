@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <code>v0.4.3</code> · macOS · <b>private alpha</b> · public source ~v0.5
+  <code>v0.4.4</code> · macOS · <b>private alpha</b> · public source ~v0.5
 </p>
 
 ---
@@ -137,22 +137,29 @@ We're explicit about this because the alternative is dishonest.
 - **Cost** (DeepSeek V4 Flash, default): roughly **$0.50–$5 per month** depending on IM
   volume + AI-native depth (per-meeting briefs, voice-matched pushes, weekly persona
   refresh).
-- **Fully local mode**: pass `--local-only` to route everything through Ollama (Qwen
-  32B or similar). Slower; quality varies; your data never leaves your Mac.
+- **Fully local mode** *(experimental — see caveats)*: pass `--local-only` to route
+  everything through Ollama (Qwen 32B or similar). Your data never leaves your Mac.
+  Real-world tradeoffs (audit P2 #52):
+  - **Hardware**: Qwen 32B uses ~32GB RAM. M3+ recommended.
+  - **Speed**: 30-day WeChat extract = 4–6 hours vs ~5 minutes on cloud.
+  - **Quality**: Chinese commitment-extraction precision drops ~20% vs DeepSeek;
+    verify on your data first.
+  - **Recommended use case**: legal / medical / financial-context conversations.
+    Hybrid mode (local for voice, cloud for extraction) is roadmapped.
 - **Sensitive content filter**: credit cards, OTP codes, password formats are dropped at
   the collector layer before any LLM sees them.
 - **Per-person killswitch + bulk forget**: `op forget --person <id>` atomically removes a
   person from every table, audit-logged.
 
 **Posture (private alpha)**: 0 CVEs across 90+ transitive deps · `bandit` baseline clean
-· `ruff` green on every commit · **991 unit tests** across collectors / extractors /
+· `ruff` green on every commit · **996 unit tests** across collectors / extractors /
 store / API / MCP / CLI / agent layer / SPA / CSP / inline-edit / widget xcodeproj /
 schema index audit / Gmail OAuth flow / MCP write-gate / schema versioning / WeChat
-group classification / mutations CDC / lock-screen widget quality gate / a11y boundary.
-Full threat model ships in the alpha bundle; moves to `docs/security.md` at public
-source open.
+group classification / mutations CDC / lock-screen widget quality gate / a11y boundary
+/ markdown round-trip / cold-start attention_score baseline. Full threat model ships
+in the alpha bundle; moves to `docs/security.md` at public source open.
 
-> **Test scope honesty** (paperboy P2 #33): the 991 number is unit
+> **Test scope honesty** (paperboy P2 #33): the 996 number is unit
 > + integration tests with mocked LLM. Real-data smoke (DeepSeek
 > calls + actual chat.db + EventKit + Swift widget) is manual
 > dogfood by the maintainer — not in CI. PRs adding e2e fixtures
@@ -303,7 +310,8 @@ for the tool inventory.
 | **v0.4** *(shipped)* | **Wave E contact metadata extractor** (bio / relationship / preference / tag / date / school / note with hallucination guard) · **inner-circle tier persistence** (top-20 inner / next-30 close from `attention_score`, daily 04:00 recompute) · **Person Page raw-messages viewer** (lazy-loaded archive timeline) · **MCP archive tools** (`query_messages` + `message_archive_stats` for external agents) · **6 new collector offline paths** (WhatsApp Export-Chat .txt / Telegram result.json / Gmail IMAP / Outlook .eml dir / Slack export / Discord export) · **schema index audit** (+6 hot-path indexes) · **Apple Health sync CLI** (`op apple-health-sync`) · **widget xcodeproj generator** (`op widget-xcodeproj`) | shipped |
 | **v0.4.1** *(shipped)* | Wave E **wired into weekly tick** (Sundays 04:30 over inner-circle) · `op metadata-extract` / `op tier-recompute` / `op doctor-schema` / `op collectors-status` CLI commands · **Gmail OAuth** end-to-end (`op auth gmail` runs the loopback flow; Gmail API path live, stdlib only — no `google-auth-oauthlib` dep) · IMAP pagination + max-threads warning · `scripts/publish-pypi.sh` with pre-flight CHANGELOG check | shipped |
 | **v0.4.2** *(shipped)* | External-audit round 1: **WeChat `@chatroom` group detection** (root-cause for 16k msgs all stamped chat_kind='private') · commit-pipeline **quality floor** (drops `what`<5 chars, intent-without-time, audit-curated reject set) · **noise-people regex** (catches `刚刚`/`吴+`/test-fixture leaks/embedded group hints) · **MCP write-tool security gate** (`OPENPERSONA_MCP_WRITES_REQUIRE_REVIEW=1` short-circuits direct writes; audit.log forensic trail always-on) · **dedicated daemon-writer connection** (`db.daemon_writer()` with explicit BEGIN IMMEDIATE) · **schema-versioning framework** (`schema_versions` + linear migrations) | shipped |
-| **v0.4.3** *(now, shipped)* | External-audit round 2: **Lock-screen widget quality gate** (≥1 fact + tier preference; no more zero-context placeholder names on the hero surface) · **ingest-time noise filter** (BROADCAST_BLOCKLIST checked at raw_messages.upsert AND in auto_extract before LLM call) · **voice calibration from raw_messages** (real conversation, not task-y promise excerpts) · **tier exposed end-to-end** (PersonOut.tier · `?tier=inner` filter · Inner/Close badges · /people pill row) · **`window.confirm` → ConfirmDialog** (Bauhaus modal, focus trap, role=alertdialog) · **a11y boundary** (svelte:boundary + skip-link, WCAG 2.4.1) · **mutations CDC log** (real /api/changes deletions; fixes the GDPR violation where `op forget` never reached webhook subscribers) · **`op doctor --report`** (redacted bug-bundle: schema + state + audit-tail, zero PII) | shipped |
+| **v0.4.3** *(shipped)* | External-audit round 2: **Lock-screen widget quality gate** (≥1 fact + tier preference; no more zero-context placeholder names on the hero surface) · **ingest-time noise filter** (BROADCAST_BLOCKLIST checked at raw_messages.upsert AND in auto_extract before LLM call) · **voice calibration from raw_messages** (real conversation, not task-y promise excerpts) · **tier exposed end-to-end** (PersonOut.tier · `?tier=inner` filter · Inner/Close badges · /people pill row) · **`window.confirm` → ConfirmDialog** (Bauhaus modal, focus trap, role=alertdialog) · **a11y boundary** (svelte:boundary + skip-link, WCAG 2.4.1) · **mutations CDC log** (real /api/changes deletions; fixes the GDPR violation where `op forget` never reached webhook subscribers) · **`op doctor --report`** (redacted bug-bundle: schema + state + audit-tail, zero PII) | shipped |
+| **v0.4.4** *(now, shipped)* | External-audit round 3: **inner-circle dead-loop fix** (interactions logged at /accept /dismiss /page-open /push-fired; cold-start activity baseline so day-1 ranking is meaningful) · **secret hygiene** (backup excludes `llm.env` + `auth/` by default; audit.log chmod 0600) · **UTC timestamps** at every store write (stops cross-tz drift on first_seen_at vs last_seen_at) · **past-tense + self-reminder filter** (drops "发了X" / "I sent Y" + committer==committee==me in commit pipeline + prompt) · **promise IDs in markdown** `<!-- pr_xxx -->` for lossless round-trip · **rate limit split** {llm, read, mutate} buckets (no more inbox-bulk-accept self-DOS) · **strip date suffix** from display_name (no more `p_刘若琳-12-18`) · **`op cache --clear`** · **`op repair`** (orphan source backfill) · **`op uninstall --everything`** · **`op demo-mode`** (env-var swap to .demo for safe live demos) · **docs/README.md navigation** · **KNOWN_ISSUES.md → KNOWN_LIMITATIONS.md** (reframed as design choices) · **README Ollama reality** (32GB RAM, 4-6h, -20% recall caveats) | shipped |
 | **v1.0** *(+3 mo)* | Cross-device sync · plugin marketplace · Lock-screen widget signing & distribution · PyPI publish · **source opens here** | — |
 
 [`docs/roadmap.md`](docs/roadmap.md) for the day-by-day breakdown.
