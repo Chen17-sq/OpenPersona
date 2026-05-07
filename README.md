@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <code>v0.4.1</code> · macOS · <b>private alpha</b> · public source ~v0.4.x
+  <code>v0.4.2</code> · macOS · <b>private alpha</b> · public source ~v0.5
 </p>
 
 ---
@@ -137,10 +137,11 @@ We're explicit about this because the alternative is dishonest.
   person from every table, audit-logged.
 
 **Posture (private alpha)**: 0 CVEs across 90+ transitive deps · `bandit` baseline clean
-· `ruff` green on every commit · **974 tests** across collectors / extractors / store /
+· `ruff` green on every commit · **982 tests** across collectors / extractors / store /
 API / MCP / CLI / agent layer / SPA / CSP / inline-edit / widget xcodeproj generator /
-schema index audit / Gmail OAuth flow. Full threat model ships in the alpha bundle and
-moves to `docs/security.md` at public source open.
+schema index audit / Gmail OAuth flow / MCP write-gate / schema versioning / WeChat
+group classification. Full threat model ships in the alpha bundle and moves to
+`docs/security.md` at public source open.
 
 ---
 
@@ -285,7 +286,8 @@ for the tool inventory.
 | **v0.2** *(now, private alpha)* | UX polish (Toast / EmptyState / `?` / optimistic UI / Person-page Svelte rewrite) · setup wizard + sources table · `op morning-push` daemon · terminal-notifier backend · **Agent Native HTTP API** (/changes, /schema, /webhooks, /bulk + idempotency) · status banner · **Master mode** (audit panel · conflict detection · staleness scorer · `op identity-merge` cross-source phone match · groups + group_members schema · conflict-resolve endpoint with master-review UI) | shipped |
 | **v0.3** *(shipped)* | **raw_messages archive** (persistent local IM corpus) · `op backfill` for full-history pulls · `/api/messages` agent retrieval · `op storage` report · webhook delivery daemon (v0.2 registrations now fire) · Ollama local-mode (`op setup --only ollama`) · group-chat LLM extraction (topic / convener / lurkers / mutual-intro) | shipped |
 | **v0.4** *(shipped)* | **Wave E contact metadata extractor** (bio / relationship / preference / tag / date / school / note with hallucination guard) · **inner-circle tier persistence** (top-20 inner / next-30 close from `attention_score`, daily 04:00 recompute) · **Person Page raw-messages viewer** (lazy-loaded archive timeline) · **MCP archive tools** (`query_messages` + `message_archive_stats` for external agents) · **6 new collector offline paths** (WhatsApp Export-Chat .txt / Telegram result.json / Gmail IMAP / Outlook .eml dir / Slack export / Discord export) · **schema index audit** (+6 hot-path indexes) · **Apple Health sync CLI** (`op apple-health-sync`) · **widget xcodeproj generator** (`op widget-xcodeproj`) | shipped |
-| **v0.4.1** *(now, shipped)* | Wave E **wired into weekly tick** (Sundays 04:30 over inner-circle) · `op metadata-extract` / `op tier-recompute` / `op doctor-schema` / `op collectors-status` CLI commands · **Gmail OAuth** end-to-end (`op auth gmail` runs the loopback flow; Gmail API path live, stdlib only — no `google-auth-oauthlib` dep) · IMAP pagination + max-threads warning · `scripts/publish-pypi.sh` with pre-flight CHANGELOG check | shipped |
+| **v0.4.1** *(shipped)* | Wave E **wired into weekly tick** (Sundays 04:30 over inner-circle) · `op metadata-extract` / `op tier-recompute` / `op doctor-schema` / `op collectors-status` CLI commands · **Gmail OAuth** end-to-end (`op auth gmail` runs the loopback flow; Gmail API path live, stdlib only — no `google-auth-oauthlib` dep) · IMAP pagination + max-threads warning · `scripts/publish-pypi.sh` with pre-flight CHANGELOG check | shipped |
+| **v0.4.2** *(now, shipped)* | External-audit response: **WeChat `@chatroom` group detection** (root-cause for 16k msgs all stamped chat_kind='private') · commit-pipeline **quality floor** (drops `what`<5 chars, intent-without-time, audit-curated reject set) · **noise-people regex** (catches `刚刚`/`吴+`/test-fixture leaks/embedded group hints) · **MCP write-tool security gate** (`OPENPERSONA_MCP_WRITES_REQUIRE_REVIEW=1` short-circuits direct writes; audit.log forensic trail always-on) · **dedicated daemon-writer connection** (`db.daemon_writer()` with explicit BEGIN IMMEDIATE) · **schema-versioning framework** (`schema_versions` + linear migrations) | shipped |
 | **v1.0** *(+3 mo)* | Cross-device sync · plugin marketplace · Lock-screen widget signing & distribution · PyPI publish · **source opens here** | — |
 
 [`docs/roadmap.md`](docs/roadmap.md) for the day-by-day breakdown.
