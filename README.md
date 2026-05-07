@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <code>v0.4.2</code> · macOS · <b>private alpha</b> · public source ~v0.5
+  <code>v0.4.3</code> · macOS · <b>private alpha</b> · public source ~v0.5
 </p>
 
 ---
@@ -97,18 +97,26 @@ Replaces every traditional search bar, filter, and dashboard query.
 
 OpenPersona reads conversations from the IM platforms you actually live in.
 
-| Platform | Status | Notes |
-|---|---|---|
-| **iMessage** | ✅ shipping | Direct `chat.db` read · SMS spam filter · service-aware |
-| **WeChat** | ✅ shipping | Via [`wechat-cli`](https://github.com/Chen17-sq/wechat-cli) subprocess |
-| **WhatsApp** | ✅ v0.4 | `wacrawl` live + Export-Chat .txt offline path (`OPENPERSONA_WHATSAPP_EXPORT_DIR`) |
-| **Telegram** | ✅ v0.4 | Telethon live + Telegram Desktop result.json offline path (`OPENPERSONA_TELEGRAM_EXPORT_JSON`) |
-| **Gmail** | ✅ v0.4 | Stdlib `imaplib` IMAP path · Gmail API via stdlib OAuth (`op auth gmail`) |
-| **Outlook** | ✅ v0.4 | Microsoft Graph live + .eml directory offline (`OPENPERSONA_OUTLOOK_EML_DIR`) |
-| **Slack** | ✅ v0.4 | Workspace export / `slackdump` offline (`OPENPERSONA_SLACK_EXPORT_DIR`) |
-| **Discord** | ✅ v0.4 | Official data export + DiscordChatExporter JSON (`OPENPERSONA_DISCORD_EXPORT_DIR`) |
-| **Apple Health** | ✅ v0.4 | Export ZIP → `health:*` facts on `me` (`op apple-health-sync`) |
-| **Your platform** | 🤝 anytime | [Collector Protocol](docs/architecture.md) — 3 record types, 2 functions, ship a PR |
+| Platform | Live API | Offline export | Notes |
+|---|---|---|---|
+| **iMessage** | ✅ shipping | — | Direct `chat.db` read · SMS spam filter · service-aware |
+| **WeChat** | ✅ shipping | — | Via [`wechat-cli`](https://github.com/Chen17-sq/wechat-cli) subprocess |
+| **WhatsApp** | beta (`wacrawl`) | ✅ shipping | `OPENPERSONA_WHATSAPP_EXPORT_DIR` for Export-Chat .txt |
+| **Telegram** | beta (Telethon) | ✅ shipping | `OPENPERSONA_TELEGRAM_EXPORT_JSON` for Desktop export |
+| **Gmail** | ✅ shipping (IMAP + OAuth) | — | `op auth gmail` runs the loopback flow; both API + IMAP paths live |
+| **Outlook** | beta (Microsoft Graph) | ✅ shipping | `OPENPERSONA_OUTLOOK_EML_DIR` for .eml directory |
+| **Slack** | — | ✅ shipping | `OPENPERSONA_SLACK_EXPORT_DIR` for `slackdump` / workspace export |
+| **Discord** | — | ✅ shipping | `OPENPERSONA_DISCORD_EXPORT_DIR` for official export or DiscordChatExporter JSON |
+| **Apple Health** | — | ✅ shipping | Export ZIP → `health:*` facts on `me` (`op apple-health-sync`) |
+| **Your platform** | 🤝 anytime | 🤝 anytime | [Collector Protocol](docs/architecture.md) — 3 record types, 2 functions, ship a PR |
+
+> **Honest reality column** (paperboy P2 #31): "shipping" means
+> the code path runs end-to-end with a synthetic fixture. Beta-flagged
+> live paths need user tokens / a desktop binary install + a real
+> account to validate; they're code-complete but only iMessage +
+> WeChat have been dogfooded against real data daily by the
+> maintainer. Run `op collectors-status` to see what's wired up
+> on your machine.
 
 The collector layer is **one protocol** — three record types (`Source`, `Message`,
 `Event`), two functions to implement (`iter_messages`, `iter_events`). Anything that
@@ -137,11 +145,18 @@ We're explicit about this because the alternative is dishonest.
   person from every table, audit-logged.
 
 **Posture (private alpha)**: 0 CVEs across 90+ transitive deps · `bandit` baseline clean
-· `ruff` green on every commit · **982 tests** across collectors / extractors / store /
-API / MCP / CLI / agent layer / SPA / CSP / inline-edit / widget xcodeproj generator /
+· `ruff` green on every commit · **991 unit tests** across collectors / extractors /
+store / API / MCP / CLI / agent layer / SPA / CSP / inline-edit / widget xcodeproj /
 schema index audit / Gmail OAuth flow / MCP write-gate / schema versioning / WeChat
-group classification. Full threat model ships in the alpha bundle and moves to
-`docs/security.md` at public source open.
+group classification / mutations CDC / lock-screen widget quality gate / a11y boundary.
+Full threat model ships in the alpha bundle; moves to `docs/security.md` at public
+source open.
+
+> **Test scope honesty** (paperboy P2 #33): the 991 number is unit
+> + integration tests with mocked LLM. Real-data smoke (DeepSeek
+> calls + actual chat.db + EventKit + Swift widget) is manual
+> dogfood by the maintainer — not in CI. PRs adding e2e fixtures
+> are very welcome once source opens.
 
 ---
 
@@ -287,7 +302,8 @@ for the tool inventory.
 | **v0.3** *(shipped)* | **raw_messages archive** (persistent local IM corpus) · `op backfill` for full-history pulls · `/api/messages` agent retrieval · `op storage` report · webhook delivery daemon (v0.2 registrations now fire) · Ollama local-mode (`op setup --only ollama`) · group-chat LLM extraction (topic / convener / lurkers / mutual-intro) | shipped |
 | **v0.4** *(shipped)* | **Wave E contact metadata extractor** (bio / relationship / preference / tag / date / school / note with hallucination guard) · **inner-circle tier persistence** (top-20 inner / next-30 close from `attention_score`, daily 04:00 recompute) · **Person Page raw-messages viewer** (lazy-loaded archive timeline) · **MCP archive tools** (`query_messages` + `message_archive_stats` for external agents) · **6 new collector offline paths** (WhatsApp Export-Chat .txt / Telegram result.json / Gmail IMAP / Outlook .eml dir / Slack export / Discord export) · **schema index audit** (+6 hot-path indexes) · **Apple Health sync CLI** (`op apple-health-sync`) · **widget xcodeproj generator** (`op widget-xcodeproj`) | shipped |
 | **v0.4.1** *(shipped)* | Wave E **wired into weekly tick** (Sundays 04:30 over inner-circle) · `op metadata-extract` / `op tier-recompute` / `op doctor-schema` / `op collectors-status` CLI commands · **Gmail OAuth** end-to-end (`op auth gmail` runs the loopback flow; Gmail API path live, stdlib only — no `google-auth-oauthlib` dep) · IMAP pagination + max-threads warning · `scripts/publish-pypi.sh` with pre-flight CHANGELOG check | shipped |
-| **v0.4.2** *(now, shipped)* | External-audit response: **WeChat `@chatroom` group detection** (root-cause for 16k msgs all stamped chat_kind='private') · commit-pipeline **quality floor** (drops `what`<5 chars, intent-without-time, audit-curated reject set) · **noise-people regex** (catches `刚刚`/`吴+`/test-fixture leaks/embedded group hints) · **MCP write-tool security gate** (`OPENPERSONA_MCP_WRITES_REQUIRE_REVIEW=1` short-circuits direct writes; audit.log forensic trail always-on) · **dedicated daemon-writer connection** (`db.daemon_writer()` with explicit BEGIN IMMEDIATE) · **schema-versioning framework** (`schema_versions` + linear migrations) | shipped |
+| **v0.4.2** *(shipped)* | External-audit round 1: **WeChat `@chatroom` group detection** (root-cause for 16k msgs all stamped chat_kind='private') · commit-pipeline **quality floor** (drops `what`<5 chars, intent-without-time, audit-curated reject set) · **noise-people regex** (catches `刚刚`/`吴+`/test-fixture leaks/embedded group hints) · **MCP write-tool security gate** (`OPENPERSONA_MCP_WRITES_REQUIRE_REVIEW=1` short-circuits direct writes; audit.log forensic trail always-on) · **dedicated daemon-writer connection** (`db.daemon_writer()` with explicit BEGIN IMMEDIATE) · **schema-versioning framework** (`schema_versions` + linear migrations) | shipped |
+| **v0.4.3** *(now, shipped)* | External-audit round 2: **Lock-screen widget quality gate** (≥1 fact + tier preference; no more zero-context placeholder names on the hero surface) · **ingest-time noise filter** (BROADCAST_BLOCKLIST checked at raw_messages.upsert AND in auto_extract before LLM call) · **voice calibration from raw_messages** (real conversation, not task-y promise excerpts) · **tier exposed end-to-end** (PersonOut.tier · `?tier=inner` filter · Inner/Close badges · /people pill row) · **`window.confirm` → ConfirmDialog** (Bauhaus modal, focus trap, role=alertdialog) · **a11y boundary** (svelte:boundary + skip-link, WCAG 2.4.1) · **mutations CDC log** (real /api/changes deletions; fixes the GDPR violation where `op forget` never reached webhook subscribers) · **`op doctor --report`** (redacted bug-bundle: schema + state + audit-tail, zero PII) | shipped |
 | **v1.0** *(+3 mo)* | Cross-device sync · plugin marketplace · Lock-screen widget signing & distribution · PyPI publish · **source opens here** | — |
 
 [`docs/roadmap.md`](docs/roadmap.md) for the day-by-day breakdown.
